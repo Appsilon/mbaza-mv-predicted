@@ -24,7 +24,7 @@ Note the final 3 commands are optional:
 
 - `output_path` defaults to `/path/to/images/predicted`
 - `p` is the probability threshold required to copy the image to the top predicted species (otherwise copied to `unknown`), defaults to 0 i.e. all images will be copied to a species folder
-- `multi_p` is the probability threshold required to also copy images to the 2nd/3rd top predicted species folder (multi-label), defaults to 1 i.e. images will only be copied to one folder
+- `p_multi` is the probability threshold required to also copy images to the 2nd/3rd top predicted species folder (multi-label), default behaviour is off i.e. images will only be copied to one folder
 
 For help with commands run:
 

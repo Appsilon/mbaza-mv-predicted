@@ -6,6 +6,7 @@ from pandarallel import pandarallel
 from pathlib import Path
 from PIL import Image
 from pydantic import BaseModel, FilePath, DirectoryPath, validator
+from typing import Optional
 
 
 pandarallel.initialize(progress_bar=True)
@@ -16,7 +17,7 @@ class Settings(BaseModel):
     image_path: DirectoryPath
     output_path: Path
     prob_threshold: float = 0.
-    prob_multi_threshold: float = 0.5
+    prob_multi_threshold: Optional[float] = None
     max_multi_pred: int = 3
 
     @validator("output_path")
@@ -44,8 +45,14 @@ def process(settings: Settings):
             new_path = None
 
             if (
-                    (i == 1 and row[f"score_{i}"] > settings.prob_threshold) or \
-                    (i > 1 and row[f"score_{i}"] > settings.prob_multi_threshold)
+                    (
+                        i == 1 and row[f"score_{i}"] > settings.prob_threshold
+                    ) 
+                    or \
+                    (
+                        i > 1 and settings.prob_multi_threshold is not None \
+                        and row[f"score_{i}"] > settings.prob_multi_threshold
+                    )
                 ):
 
                 orig_path = settings.image_path / row["location"]
@@ -94,7 +101,7 @@ def get_exif(path: Path):
 
 def get_corridor_string(text: str):
 
-    start = text.find("CORRIDOR")    
+    start = text.lower().find("corridor")    
     end = text.find("\\", start)
     return text[start:end].strip()
 
@@ -104,8 +111,8 @@ def main():
     parser.add_argument("csv_path", type=Path, help="Path to csv output from Mbaza")
     parser.add_argument("image_path", type=Path, help="Path to images (same as supplied to Mbaza)")
     parser.add_argument("--output_path", type=Path, help="Folder to move images to (default is image_path/predicted)", required=False, default=None)
-    parser.add_argument("--p", type=float, help="Confidence threshold to move image for top prediction", required=False, default=0.)
-    parser.add_argument("--p_multi", type=float, help="Confidence threshold to also move image for 2nd and 3rd predictions", required=False, default=0.5)
+    parser.add_argument("--p", type=float, help="Confidence threshold to move image to top prediction folder", required=False, default=0.)
+    parser.add_argument("--p_multi", type=float, help="Confidence threshold to also move image to 2nd and 3rd prediction folders", required=False, default=None)
     args = parser.parse_args()
 
     if args.output_path is None:
