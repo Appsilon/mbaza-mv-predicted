@@ -56,20 +56,16 @@ def process(settings: Settings):
                 ):
 
                 orig_path = settings.image_path / row["location"]
-                
                 exif = get_exif(orig_path)
-
-                camera = get_corridor_string(str(exif[37500]))
-                camera_path = "/".join(camera.rsplit("-", 1))
                 
                 date = datetime.strptime(exif[36867], "%Y:%m:%d %H:%M:%S")
                 date_path = f"{date.year}/week{date.isocalendar()[1]}"
 
-                new_path = settings.output_path / date_path / camera_path / row[f"pred_{i}"]
+                new_path = settings.output_path / date_path / row[f"pred_{i}"]
             else:
                 # Move to unknown folder
                 if i == 1:
-                    new_path = settings.output_path / date_path / camera_path / "unknown"
+                    new_path = settings.output_path / date_path / "unknown"
 
             if new_path is not None:
                 new_path.mkdir(exist_ok=True, parents=True)
@@ -97,13 +93,6 @@ def get_exif(path: Path):
         raise ValueError(f"No exif data found for file: {path}")
         
     return exif
-
-
-def get_corridor_string(text: str):
-
-    start = text.lower().find("corridor")    
-    end = text.find("\\", start)
-    return text[start:end].strip()
 
 
 def main():
