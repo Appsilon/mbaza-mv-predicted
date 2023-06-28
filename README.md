@@ -19,9 +19,10 @@ mbaza_mv_predicted /path/to/mbaza_output_file.csv /path/to/images --output_path 
 ```
 
 This will output a new csv file in the `output_path` directory which contains the original Mbaza information and paths where the image has been copied to.
+
 NOTE: this requires the same `/path/to/images` as provided to Mbaza.
 
-The final 3 commands are optional:
+The following commands are optional:
 
 - `output_path` defaults to `/path/to/images/predicted`
 - `p` is the probability threshold required to copy the image to the top predicted species (otherwise copied to `unknown`), defaults to 0 i.e. all images will be copied to a species folder
